@@ -18,7 +18,9 @@ typedef SocketFilter = Future<SocketInterface> Function(SocketInterface);
 
 /// Asynchronous HTTP request
 class HttpRequest {
-  String url, method, data;
+  Uri url;
+  String method;
+  String data;
   Map<String, String> headers;
   Completer<HttpResponse> completer = Completer<HttpResponse>();
   HttpRequest(this.url, this.method, {this.data, this.headers});
@@ -44,7 +46,7 @@ abstract class HttpClient {
   StringCallback debugPrint;
   HttpClient({this.debugPrint});
 
-  Future<HttpResponse> request(String url,
+  Future<HttpResponse> request(Uri url,
       {String method, String data, Map<String, String> headers});
 }
 
@@ -53,7 +55,7 @@ class TestHttpClient extends HttpClient {
   Queue<HttpRequest> requests = Queue<HttpRequest>();
 
   @override
-  Future<HttpResponse> request(String url,
+  Future<HttpResponse> request(Uri url,
       {String method, String data, Map<String, String> headers}) {
     HttpRequest httpRequest = HttpRequest(url, method, data: data);
     requests.add(httpRequest);
@@ -72,7 +74,7 @@ class HttpClientImpl extends HttpClient {
   }
 
   @override
-  Future<HttpResponse> request(String url,
+  Future<HttpResponse> request(Uri url,
       {String method, String data, Map<String, String> headers}) async {
     numOutstanding++;
     if (debugPrint != null) debugPrint('HTTP Request: $url');
